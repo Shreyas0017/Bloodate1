@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_API_BASE_URL || '/api'
+const DEFAULT_BASE = import.meta.env.DEV ? '/api' : 'https://bloodate1.onrender.com/api'
+const BASE = import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE
 
 export async function fetchDonors() {
   try {
