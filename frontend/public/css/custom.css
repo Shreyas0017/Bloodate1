@@ -1,0 +1,300 @@
+/* Fresh UI baseline for Bloodate */
+:root {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #e11d48;
+  --accent-2: #f97316;
+  --border: #e2e8f0;
+  --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(900px 300px at 15% 0%, rgba(225, 29, 72, 0.12), transparent 60%),
+    radial-gradient(900px 300px at 85% 0%, rgba(249, 115, 22, 0.14), transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent); }
+
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; }
+
+.page-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #ffe4e6;
+}
+
+.soft-shadow {
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.06);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #e11d48;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid transparent;
+  box-shadow: 0 12px 24px rgba(225, 29, 72, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #be123c;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(225, 29, 72, 0.3);
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-inverse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #7f1d1d;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-inverse:hover {
+  background: #fff5f5;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+.landing-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
+  color: #ffffff;
+  box-shadow: 0 30px 60px rgba(220, 38, 38, 0.35);
+}
+
+.landing-hero::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  right: -120px;
+  top: -140px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.landing-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 140px 140px;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-hero::before {
+  z-index: 0;
+}
+
+.landing-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-card {
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.14);
+  padding: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.role-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(225, 29, 72, 0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.role-card:hover::after {
+  opacity: 1;
+}
+
+.reveal {
+  animation: fadeUp 0.7s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.portal-hero {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(255, 247, 237, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.blood-bank-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 241, 242, 0.9) 0%, rgba(255, 247, 237, 0.9) 50%, rgba(254, 252, 232, 0.9) 100%);
+}
+
+.blood-bank-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 20%, rgba(225, 29, 72, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 85% 10%, rgba(249, 115, 22, 0.12) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+.blood-bank-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.blood-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.blood-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.1);
+}
+
+.blood-meter {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.blood-meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f97316 0%, #e11d48 100%);
+  transition: width 0.3s ease;
+}
+
+.blood-meter-fill[data-level="low"] {
+  background: linear-gradient(90deg, #f59e0b 0%, #fb7185 100%);
+}
+
+.blood-meter-fill[data-level="mid"] {
+  background: linear-gradient(90deg, #fb7185 0%, #f97316 100%);
+}
+
+.blood-meter-fill[data-level="high"] {
+  background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
+}
+
+  

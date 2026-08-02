@@ -1,0 +1,250 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Donor {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  dateOfBirth DateTime?
+  parentName String?
+  address   String?
+  city      String?
+  state     String?
+  zip       String?
+  emergencyContactName String?
+  emergencyContactPhone String?
+  bloodType String?
+  weight    Float?
+  gender    String?
+  lastDonation DateTime?
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?  @unique
+  createdAt DateTime @default(now())
+  requests  Request[]
+  uploads   Upload[]
+  medicalReports MedicalReport[]
+  eligibilityChecks EligibilityCheck[]
+  donationInterests DonationInterest[]
+
+  @@index([email])
+  @@index([bloodType])
+  @@index([userId])
+  @@index([city])
+  @@index([state])
+}
+
+enum Role {
+  DONOR
+  HOSPITAL_ADMIN
+  HOSPITAL_STAFF
+  SUPER_ADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(DONOR)
+  donor        Donor?
+  hospital     Hospital? @relation(fields: [hospitalId], references: [id])
+  hospitalId   String?
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  uploads      Upload[]
+  reviewedChecks EligibilityCheck[]
+
+  @@index([email])
+  @@index([hospitalId])
+}
+
+model Hospital {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now())
+  stocks    BloodStock[]
+  requests  Request[]
+  uploads   Upload[]
+  users     User[]
+}
+
+model BloodStock {
+  id         String   @id @default(cuid())
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId String
+  bloodType  String
+  quantity   Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  @@index([hospitalId])
+  @@index([bloodType])
+  @@unique([hospitalId, bloodType])
+}
+
+enum RequestStatus {
+  PENDING
+  FULFILLED
+  CANCELLED
+}
+
+model Request {
+  id         String        @id @default(cuid())
+  donor      Donor?        @relation(fields: [donorId], references: [id])
+  donorId    String?
+  hospital   Hospital?     @relation(fields: [hospitalId], references: [id])
+  hospitalId String?
+  bloodType  String
+  quantity   Int
+  status     RequestStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+  interests  DonationInterest[]
+
+  @@index([hospitalId])
+  @@index([donorId])
+  @@index([bloodType])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model DonationInterest {
+  id        String   @id @default(cuid())
+  donor     Donor    @relation(fields: [donorId], references: [id])
+  donorId   String
+  request   Request  @relation(fields: [requestId], references: [id])
+  requestId String
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@unique([donorId, requestId])
+  @@index([donorId])
+  @@index([requestId])
+}
+
+model Upload {
+  id           String   @id @default(cuid())
+  originalName String
+  filename     String
+  url          String
+  publicId     String?
+  bytes        Int?
+  uploader     User?    @relation(fields: [uploaderId], references: [id])
+  uploaderId   String?
+  hospital     Hospital?@relation(fields: [hospitalId], references: [id])
+  hospitalId   String?
+  donor        Donor?   @relation(fields: [donorId], references: [id])
+  donorId      String?
+  createdAt    DateTime @default(now())
+  medicalReport MedicalReport?
+
+  @@index([uploaderId])
+  @@index([donorId])
+  @@index([hospitalId])
+}
+
+// ── AI Eligibility Verification System ──
+
+enum ReportStatus {
+  UPLOADED
+  PROCESSING
+  PARSED
+  FAILED
+}
+
+enum EligibilityStatus {
+  ELIGIBLE
+  TEMPORARILY_INELIGIBLE
+  PERMANENTLY_INELIGIBLE
+  PENDING_REVIEW
+}
+
+model MedicalReport {
+  id              String       @id @default(cuid())
+  donor           Donor        @relation(fields: [donorId], references: [id])
+  donorId         String
+  upload          Upload       @relation(fields: [uploadId], references: [id])
+  uploadId        String       @unique
+  status          ReportStatus @default(UPLOADED)
+
+  // Raw OCR text
+  rawText         String?
+
+  // Parsed structured data (JSON blob)
+  parsedData      Json?
+
+  // Extracted fields (denormalized for queries)
+  patientName     String?
+  age             Int?
+  gender          String?
+  bloodGroup      String?
+  hemoglobin      Float?
+  systolicBP      Int?
+  diastolicBP     Int?
+  sugarLevel      Float?
+  plateletCount   Float?
+  wbcCount        Float?
+  rbcCount        Float?
+  hivStatus       String?
+  hepatitisStatus String?
+  malariaStatus   String?
+  reportDate      DateTime?
+  labName         String?
+
+  // Confidence scores
+  ocrConfidence       Float?
+  parseConfidence     Float?
+  fraudRisk           String?  @default("Unknown")
+  fileHash            String?
+
+  // Linked eligibility result
+  eligibilityCheck    EligibilityCheck?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([donorId])
+  @@index([status])
+  @@index([reportDate])
+  @@index([fileHash])
+}
+
+model EligibilityCheck {
+  id                    String            @id @default(cuid())
+  report                MedicalReport     @relation(fields: [reportId], references: [id])
+  reportId              String            @unique
+  donor                 Donor             @relation(fields: [donorId], references: [id])
+  donorId               String
+
+  status                EligibilityStatus @default(PENDING_REVIEW)
+  reasons               Json?
+  missingDocuments      Json?
+  healthRisks           Json?
+  retryAfterDays        Int?
+  aiExplanation         String?
+
+  eligibilityConfidence Float?
+
+  // Admin review
+  reviewedBy            User?             @relation(fields: [reviewedById], references: [id])
+  reviewedById          String?
+  adminOverride         Boolean           @default(false)
+  adminRemarks          String?
+  reviewedAt            DateTime?
+
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([donorId])
+  @@index([status])
+  @@index([reportId])
+  @@index([createdAt])
+}
